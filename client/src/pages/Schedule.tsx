@@ -1,24 +1,20 @@
 import WeekScheduleCard from "@/components/WeekScheduleCard";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { startOfWeek, addWeeks, subWeeks, format } from "date-fns";
 import { useState } from "react";
-import { generateWeekSchedule } from "@/utils/scheduleGenerator";
+import { useQuery } from "@tanstack/react-query";
+import { type Assignment } from "@shared/schema";
 
 export default function Schedule() {
   const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const [selectedWeek, setSelectedWeek] = useState(currentWeekStart);
 
-  // Generate schedule for selected week
-  // Note: Previous week's day is fetched to ensure consecutive weeks have different days
-  const getPreviousWeekDay = (weekStart: Date) => {
-    const prevWeekStart = subWeeks(weekStart, 1);
-    const prevSchedule = generateWeekSchedule(prevWeekStart, currentWeekStart);
-    return prevSchedule.auditDay;
-  };
-
-  const previousWeekDay = getPreviousWeekDay(selectedWeek);
-  const mockSchedule = generateWeekSchedule(selectedWeek, currentWeekStart, previousWeekDay);
+  // Fetch assignment for selected week
+  const { data: assignment, isLoading } = useQuery<Assignment>({
+    queryKey: ["/api/assignments/week", selectedWeek.toISOString()],
+  });
 
   const handlePrevWeek = () => {
     setSelectedWeek(subWeeks(selectedWeek, 1));
@@ -79,13 +75,27 @@ export default function Schedule() {
       </div>
 
       {/* Schedule Card */}
-      <WeekScheduleCard
-        weekStartDate={mockSchedule.weekStartDate}
-        auditEmployee1={mockSchedule.auditEmployee1}
-        auditEmployee2={mockSchedule.auditEmployee2}
-        auditDay={mockSchedule.auditDay}
-        balanceCheckEmployee={mockSchedule.balanceCheckEmployee}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" data-testid="loader-schedule" />
+        </div>
+      ) : assignment ? (
+        <WeekScheduleCard
+          weekStartDate={new Date(assignment.weekStartDate)}
+          auditEmployee1={assignment.auditEmployee1}
+          auditEmployee2={assignment.auditEmployee2}
+          auditDay={assignment.auditDay}
+          balanceCheckEmployee={assignment.balanceCheckEmployee}
+        />
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <p className="text-muted-foreground" data-testid="text-no-assignment">
+              No assignment found for this week
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -1,25 +1,29 @@
-import HistoryTable from "@/components/HistoryTable";
+import { useQuery } from "@tanstack/react-query";
+import { type Assignment } from "@shared/schema";
+import { Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import { startOfWeek, subWeeks } from "date-fns";
+import HistoryTable from "@/components/HistoryTable";
 
 export default function History() {
-  const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  // Fetch all assignments
+  const { data: assignments, isLoading } = useQuery<Assignment[]>({
+    queryKey: ["/api/assignments"],
+  });
 
-  // todo: remove mock functionality
-  const mockRecords = Array.from({ length: 25 }, (_, i) => ({
-    id: `${i + 1}`,
-    weekStartDate: subWeeks(currentWeekStart, i),
-    auditEmployee1: ["tyler", "nalleli", "claudia", "ana"][i % 4],
-    auditEmployee2: ["claudia", "ana", "tyler", "nalleli"][(i + 1) % 4],
-    auditDay: (i % 5) + 1,
-    balanceCheckEmployee: ["tyler", "claudia", "ana"][i % 3],
-    notes: i % 5 === 0 ? "Manual override due to employee absence" : undefined,
-  }));
+  // Transform assignments to the format expected by HistoryTable
+  const records = assignments?.map((assignment) => ({
+    id: assignment.id,
+    weekStartDate: new Date(assignment.weekStartDate),
+    auditEmployee1: assignment.auditEmployee1,
+    auditEmployee2: assignment.auditEmployee2,
+    auditDay: assignment.auditDay,
+    balanceCheckEmployee: assignment.balanceCheckEmployee,
+    notes: assignment.notes || undefined,
+  })) || [];
 
   const handleExport = () => {
     console.log("Export clicked");
-    // todo: remove mock functionality - this would export to CSV/PDF
+    // TODO: Implement CSV/PDF export
   };
 
   return (
@@ -37,7 +41,13 @@ export default function History() {
         </Button>
       </div>
 
-      <HistoryTable records={mockRecords} />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" data-testid="loader-history" />
+        </div>
+      ) : (
+        <HistoryTable records={records} />
+      )}
     </div>
   );
 }
