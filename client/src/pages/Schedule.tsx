@@ -1,44 +1,24 @@
 import WeekScheduleCard from "@/components/WeekScheduleCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { startOfWeek, addWeeks, subWeeks, format, differenceInWeeks } from "date-fns";
+import { startOfWeek, addWeeks, subWeeks, format } from "date-fns";
 import { useState } from "react";
+import { generateWeekSchedule } from "@/utils/scheduleGenerator";
 
 export default function Schedule() {
   const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const [selectedWeek, setSelectedWeek] = useState(currentWeekStart);
 
-  // todo: remove mock functionality - generate varying schedules
-  const getScheduleForWeek = (weekStart: Date) => {
-    const weeksDiff = differenceInWeeks(weekStart, currentWeekStart);
-    const employees = ["tyler", "nalleli", "claudia", "ana"];
-    const balanceEmployees = ["tyler", "claudia", "ana"];
-    
-    // Rotate pairs and days to ensure variation
-    const pairIndex = Math.abs(weeksDiff) % 6;
-    const pairs = [
-      ["tyler", "claudia"],
-      ["nalleli", "ana"],
-      ["tyler", "nalleli"],
-      ["claudia", "ana"],
-      ["tyler", "ana"],
-      ["nalleli", "claudia"],
-    ];
-    
-    // Ensure consecutive weeks have different days (1-5 for Mon-Fri)
-    const dayIndex = (Math.abs(weeksDiff) % 5) + 1;
-    const balanceIndex = Math.abs(weeksDiff) % 3;
-    
-    return {
-      weekStartDate: weekStart,
-      auditEmployee1: pairs[pairIndex][0],
-      auditEmployee2: pairs[pairIndex][1],
-      auditDay: dayIndex,
-      balanceCheckEmployee: balanceEmployees[balanceIndex],
-    };
+  // Generate schedule for selected week
+  // Note: Previous week's day is fetched to ensure consecutive weeks have different days
+  const getPreviousWeekDay = (weekStart: Date) => {
+    const prevWeekStart = subWeeks(weekStart, 1);
+    const prevSchedule = generateWeekSchedule(prevWeekStart, currentWeekStart);
+    return prevSchedule.auditDay;
   };
 
-  const mockSchedule = getScheduleForWeek(selectedWeek);
+  const previousWeekDay = getPreviousWeekDay(selectedWeek);
+  const mockSchedule = generateWeekSchedule(selectedWeek, currentWeekStart, previousWeekDay);
 
   const handlePrevWeek = () => {
     setSelectedWeek(subWeeks(selectedWeek, 1));

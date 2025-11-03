@@ -1,32 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WeekScheduleCard from "@/components/WeekScheduleCard";
 import EditAssignmentModal from "@/components/EditAssignmentModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { Clock, TrendingUp } from "lucide-react";
+import { generateWeekSchedule } from "@/utils/scheduleGenerator";
 
 export default function Dashboard() {
   const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const nextWeekStart = addWeeks(currentWeekStart, 1);
 
-  // todo: remove mock functionality
-  // Note: Different pairs AND different days for consecutive weeks
-  const [currentWeek, setCurrentWeek] = useState({
-    weekStartDate: currentWeekStart,
-    auditEmployee1: "tyler",
-    auditEmployee2: "claudia",
-    auditDay: 3, // Wednesday
-    balanceCheckEmployee: "ana",
-  });
+  // Generate random schedules with different days for consecutive weeks
+  const initialCurrentWeek = generateWeekSchedule(currentWeekStart, currentWeekStart);
+  const initialNextWeek = generateWeekSchedule(nextWeekStart, currentWeekStart, initialCurrentWeek.auditDay);
 
-  const [nextWeek, setNextWeek] = useState({
-    weekStartDate: nextWeekStart,
-    auditEmployee1: "nalleli",
-    auditEmployee2: "ana",
-    auditDay: 1, // Monday - different day than current week
-    balanceCheckEmployee: "tyler",
-  });
+  const [currentWeek, setCurrentWeek] = useState(initialCurrentWeek);
+  const [nextWeek, setNextWeek] = useState(initialNextWeek);
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingCurrent, setEditingCurrent] = useState(true);
