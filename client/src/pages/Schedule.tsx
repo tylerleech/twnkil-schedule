@@ -1,21 +1,44 @@
 import WeekScheduleCard from "@/components/WeekScheduleCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { startOfWeek, addWeeks, subWeeks, format } from "date-fns";
+import { startOfWeek, addWeeks, subWeeks, format, differenceInWeeks } from "date-fns";
 import { useState } from "react";
 
 export default function Schedule() {
   const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const [selectedWeek, setSelectedWeek] = useState(currentWeekStart);
 
-  // todo: remove mock functionality
-  const mockSchedule = {
-    weekStartDate: selectedWeek,
-    auditEmployee1: "tyler",
-    auditEmployee2: "claudia",
-    auditDay: 3,
-    balanceCheckEmployee: "ana",
+  // todo: remove mock functionality - generate varying schedules
+  const getScheduleForWeek = (weekStart: Date) => {
+    const weeksDiff = differenceInWeeks(weekStart, currentWeekStart);
+    const employees = ["tyler", "nalleli", "claudia", "ana"];
+    const balanceEmployees = ["tyler", "claudia", "ana"];
+    
+    // Rotate pairs and days to ensure variation
+    const pairIndex = Math.abs(weeksDiff) % 6;
+    const pairs = [
+      ["tyler", "claudia"],
+      ["nalleli", "ana"],
+      ["tyler", "nalleli"],
+      ["claudia", "ana"],
+      ["tyler", "ana"],
+      ["nalleli", "claudia"],
+    ];
+    
+    // Ensure consecutive weeks have different days (1-5 for Mon-Fri)
+    const dayIndex = (Math.abs(weeksDiff) % 5) + 1;
+    const balanceIndex = Math.abs(weeksDiff) % 3;
+    
+    return {
+      weekStartDate: weekStart,
+      auditEmployee1: pairs[pairIndex][0],
+      auditEmployee2: pairs[pairIndex][1],
+      auditDay: dayIndex,
+      balanceCheckEmployee: balanceEmployees[balanceIndex],
+    };
   };
+
+  const mockSchedule = getScheduleForWeek(selectedWeek);
 
   const handlePrevWeek = () => {
     setSelectedWeek(subWeeks(selectedWeek, 1));

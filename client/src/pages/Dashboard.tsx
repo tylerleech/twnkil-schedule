@@ -11,11 +11,12 @@ export default function Dashboard() {
   const nextWeekStart = addWeeks(currentWeekStart, 1);
 
   // todo: remove mock functionality
+  // Note: Different pairs AND different days for consecutive weeks
   const [currentWeek, setCurrentWeek] = useState({
     weekStartDate: currentWeekStart,
     auditEmployee1: "tyler",
     auditEmployee2: "claudia",
-    auditDay: 3,
+    auditDay: 3, // Wednesday
     balanceCheckEmployee: "ana",
   });
 
@@ -23,7 +24,7 @@ export default function Dashboard() {
     weekStartDate: nextWeekStart,
     auditEmployee1: "nalleli",
     auditEmployee2: "ana",
-    auditDay: 1,
+    auditDay: 1, // Monday - different day than current week
     balanceCheckEmployee: "tyler",
   });
 
@@ -49,6 +50,8 @@ export default function Dashboard() {
     // todo: remove mock functionality - this would call the backend to generate next week
   };
 
+  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
   return (
     <div className="space-y-6">
       <div>
@@ -70,7 +73,7 @@ export default function Dashboard() {
               {format(currentWeekStart, "MMM d, yyyy")}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Audit scheduled for Wednesday
+              Audit scheduled for {dayNames[currentWeek.auditDay - 1]}
             </p>
           </CardContent>
         </Card>

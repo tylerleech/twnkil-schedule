@@ -4,14 +4,14 @@ import { startOfWeek, subWeeks } from 'date-fns';
 export default function HistoryTableExample() {
   const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   
-  // todo: remove mock functionality
+  // todo: remove mock functionality - ensure varying days for consecutive weeks
   const mockRecords = [
     {
       id: "1",
       weekStartDate: currentWeekStart,
       auditEmployee1: "tyler",
       auditEmployee2: "claudia",
-      auditDay: 3,
+      auditDay: 3, // Wed
       balanceCheckEmployee: "ana",
     },
     {
@@ -19,7 +19,7 @@ export default function HistoryTableExample() {
       weekStartDate: subWeeks(currentWeekStart, 1),
       auditEmployee1: "nalleli",
       auditEmployee2: "ana",
-      auditDay: 2,
+      auditDay: 1, // Mon - different from week 1
       balanceCheckEmployee: "tyler",
     },
     {
@@ -27,7 +27,7 @@ export default function HistoryTableExample() {
       weekStartDate: subWeeks(currentWeekStart, 2),
       auditEmployee1: "claudia",
       auditEmployee2: "nalleli",
-      auditDay: 4,
+      auditDay: 5, // Fri - different from week 2
       balanceCheckEmployee: "claudia",
       notes: "Employee requested day change",
     },
@@ -36,7 +36,7 @@ export default function HistoryTableExample() {
       weekStartDate: subWeeks(currentWeekStart, 3),
       auditEmployee1: "tyler",
       auditEmployee2: "ana",
-      auditDay: 1,
+      auditDay: 2, // Tue - different from week 3
       balanceCheckEmployee: "tyler",
     },
     {
@@ -44,7 +44,7 @@ export default function HistoryTableExample() {
       weekStartDate: subWeeks(currentWeekStart, 4),
       auditEmployee1: "nalleli",
       auditEmployee2: "claudia",
-      auditDay: 5,
+      auditDay: 4, // Thu - different from week 4
       balanceCheckEmployee: "ana",
     },
   ];
