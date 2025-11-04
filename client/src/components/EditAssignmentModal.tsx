@@ -27,7 +27,7 @@ interface EditAssignmentModalProps {
 }
 
 const employees = ["tyler", "nalleli", "claudia", "ana"];
-const balanceEmployees = ["tyler", "claudia", "ana"]; // excluding nalleli
+const balanceEmployees = ["claudia", "ana"]; // excluding nalleli and tyler for balance check
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 export default function EditAssignmentModal({
@@ -38,9 +38,12 @@ export default function EditAssignmentModal({
   currentBalanceEmployee,
   onSave,
 }: EditAssignmentModalProps) {
-  const [selectedAudit, setSelectedAudit] = useState<string[]>(currentAuditPair);
+  const [selectedAudit, setSelectedAudit] =
+    useState<string[]>(currentAuditPair);
   const [selectedDay, setSelectedDay] = useState(currentAuditDay);
-  const [selectedBalance, setSelectedBalance] = useState(currentBalanceEmployee);
+  const [selectedBalance, setSelectedBalance] = useState(
+    currentBalanceEmployee,
+  );
   const [notes, setNotes] = useState("");
 
   const handleAuditToggle = (employee: string) => {
@@ -70,14 +73,17 @@ export default function EditAssignmentModal({
         <DialogHeader>
           <DialogTitle>Edit Assignment</DialogTitle>
           <DialogDescription>
-            Modify the task assignments for this week. Changes are useful when employees are absent or unavailable.
+            Modify the task assignments for this week. Changes are useful when
+            employees are absent or unavailable.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Foreign Currency Audit Pair */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Foreign Currency Audit Pair (Select 2)</Label>
+            <Label className="text-sm font-medium">
+              Foreign Currency Audit Pair (Select 2)
+            </Label>
             <div className="grid grid-cols-2 gap-3">
               {employees.map((employee) => (
                 <button
@@ -124,7 +130,9 @@ export default function EditAssignmentModal({
 
           {/* Branch Balance Check */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Branch Balance Check Employee</Label>
+            <Label className="text-sm font-medium">
+              Branch Balance Check Employee
+            </Label>
             <div className="grid grid-cols-3 gap-3">
               {balanceEmployees.map((employee) => (
                 <button
@@ -141,7 +149,9 @@ export default function EditAssignmentModal({
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
                       {employee.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-medium capitalize">{employee}</span>
+                    <span className="text-sm font-medium capitalize">
+                      {employee}
+                    </span>
                   </div>
                 </button>
               ))}
