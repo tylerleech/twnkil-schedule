@@ -1,9 +1,4 @@
-import {
-  Calendar,
-  History,
-  LayoutDashboard,
-  Settings,
-} from "lucide-react";
+import { Calendar, History, LayoutDashboard, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
